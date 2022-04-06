@@ -4,11 +4,12 @@ import {StyleSheet, Text, TextInput, View} from 'react-native';
 interface Props {
   title: string;
   onChangeText: (text: string) => void;
+  width: string;
 }
 
-const InputForm: React.FC<Props> = ({title, onChangeText}) => {
+const InputForm: React.FC<Props> = ({title, onChangeText, width}) => {
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, {width: width}]}>
       <Text style={styles.title}>{title}</Text>
       <TextInput
         style={styles.input}
@@ -24,7 +25,6 @@ export default InputForm;
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
-    width: '80%',
     alignItems: 'center',
   },
   title: {
@@ -34,12 +34,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   input: {
-    width: '50%',
     borderWidth: 1,
     marginLeft: 20,
     height: 40,
     fontSize: 15,
     borderRadius: 5,
     paddingLeft: 15,
+    flex: 1,
   },
 });
