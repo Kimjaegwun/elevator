@@ -202,8 +202,18 @@ const Elevators: React.FC<Props> = ({route}) => {
               width="50%"
               height={40}
               func={createNewModels}
-              bgColor="#0fbcf9"
-              disabled={false}
+              bgColor={
+                evModels.filter(item => item.status === 'waiting').length ===
+                evModels.length
+                  ? '#0fbcf9'
+                  : 'gray'
+              }
+              disabled={
+                evModels.filter(item => item.status === 'waiting').length ===
+                evModels.length
+                  ? false
+                  : true
+              }
             />
           </View>
         </View>
