@@ -24,7 +24,7 @@ const Box: React.FC<Props> = ({width, height, color, text}) => {
   );
 };
 
-export default Box;
+export default React.memo(Box);
 
 const styles = StyleSheet.create({
   wrapper: {

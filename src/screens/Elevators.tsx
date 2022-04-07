@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import Box from '../components/Box';
 import Button from '../components/Button';
+import InputForm from '../components/InputForm';
 import ToastModal from '../components/Toast';
 import {EVType} from '../types';
 
@@ -16,7 +17,7 @@ type Props = {
 
 const Elevators: React.FC<Props> = ({route}) => {
   // 이전 생성 데이터 저장
-  const [_, setOrigin] = useState({
+  const [origin, setOrigin] = useState({
     floor: route.params.floor,
     elevatorNum: route.params.elevatorNum,
   });
@@ -78,6 +79,7 @@ const Elevators: React.FC<Props> = ({route}) => {
 
     const enableEV = copyEVModels.filter(item => item.status === 'waiting');
 
+    // 사용가능한 E/V가 없을시 toast 활성화
     if (enableEV.length === 0) {
       handleModal();
     }
@@ -116,7 +118,7 @@ const Elevators: React.FC<Props> = ({route}) => {
       getEV.target_floor = clicked;
       setEVModels([...copyEVModels]);
 
-      // wait 함수를 사용하여 대기시간을 만들어준다
+      // wait 함수를 사용하여 대기시간 생성
       const wait = (timeToDelay: number) =>
         new Promise(resolve => setTimeout(resolve, timeToDelay));
 
@@ -160,20 +162,53 @@ const Elevators: React.FC<Props> = ({route}) => {
     });
   };
 
-  // 엘레베이터 값 변경
+  // E/V 값 변경
   const onChangeElevatorNum = (text: string) => {
     setOrigin(prev => {
       return {...prev, elevatorNum: Number(text)};
     });
   };
 
+  // 생성시 새로운 E/V 생성
+  const createNewModels = () => {};
+
   return (
-    <React.Fragment>
+    <Fragment>
       <ScrollView style={styles.container}>
+        {/* 층 및 E/V 생성 컨테이너 */}
+        <View style={styles.inputContainer}>
+          <View style={{flex: 2}}>
+            <InputForm
+              title="층수"
+              value={String(origin.floor)}
+              onChangeText={onChangeFloor}
+              width="100%"
+            />
+            <View style={{height: 10}} />
+            <InputForm
+              title="엘레베이터"
+              onChangeText={onChangeElevatorNum}
+              width="100%"
+              value={String(origin.elevatorNum)}
+            />
+          </View>
+          <View style={{flex: 3, marginLeft: 20}}>
+            <Button
+              title="생성하기"
+              width="50%"
+              height={40}
+              func={createNewModels}
+              bgColor="#0fbcf9"
+              disabled={false}
+            />
+          </View>
+        </View>
+
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.evContainer}>
+          {/* 층수 모델 */}
           <View>
             {floorModel &&
               floorModel.map(item => {
@@ -196,6 +231,7 @@ const Elevators: React.FC<Props> = ({route}) => {
               })}
           </View>
 
+          {/* E/V 모델 */}
           {evModels &&
             evModels.map(model => (
               <FlatList
@@ -246,7 +282,7 @@ const Elevators: React.FC<Props> = ({route}) => {
       </ScrollView>
 
       <ToastModal modal={modal} />
-    </React.Fragment>
+    </Fragment>
   );
 };
 
@@ -256,6 +292,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
+    paddingTop: 20,
   },
   evContainer: {
     marginTop: 10,
@@ -269,5 +306,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     marginVertical: 5,
+  },
+  inputContainer: {
+    paddingLeft: 20,
+    marginBottom: 30,
+    flexDirection: 'row',
   },
 });

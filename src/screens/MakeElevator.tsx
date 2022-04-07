@@ -36,12 +36,18 @@ const MakeElevator: React.FC<Props> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <InputForm title="층수" onChangeText={onChangeFloor} width="70%" />
+      <InputForm
+        title="층수"
+        value={String(floor)}
+        onChangeText={onChangeFloor}
+        width="70%"
+      />
       {HView(15)}
       <InputForm
         title="엘리베이터"
         onChangeText={onChangeElevatorNum}
         width="70%"
+        value={String(elevatorNum)}
       />
       {HView(30)}
       <Button

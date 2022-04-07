@@ -5,13 +5,15 @@ interface Props {
   title: string;
   onChangeText: (text: string) => void;
   width: string;
+  value: string;
 }
 
-const InputForm: React.FC<Props> = ({title, onChangeText, width}) => {
+const InputForm: React.FC<Props> = ({title, onChangeText, width, value}) => {
   return (
     <View style={[styles.wrapper, {width: width}]}>
       <Text style={styles.title}>{title}</Text>
       <TextInput
+        value={value === '0' ? '' : value}
         style={styles.input}
         onChangeText={onChangeText}
         keyboardType="numeric"
@@ -30,7 +32,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     color: '#2D2D2D',
-    width: '35%',
+    width: 75,
     fontWeight: '600',
   },
   input: {
