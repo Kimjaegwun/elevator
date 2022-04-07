@@ -50,6 +50,7 @@ const MakeElevator: React.FC<Props> = ({navigation}) => {
         height={45}
         func={navElevators}
         bgColor="#0fbcf9"
+        disabled={false}
       />
     </View>
   );

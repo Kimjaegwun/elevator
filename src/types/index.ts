@@ -8,4 +8,5 @@ export type EVType = {
   current_floor: number;
   target_floor: number;
   floors: number[];
+  status: 'waiting' | 'moving' | 'opening';
 };

@@ -5,13 +5,22 @@ interface Props {
   width: string | number;
   height: string | number;
   title: string;
-  func: () => void;
+  func: any;
   bgColor: string;
+  disabled: boolean;
 }
 
-const Button: React.FC<Props> = ({width, height, title, func, bgColor}) => {
+const Button: React.FC<Props> = ({
+  width,
+  height,
+  title,
+  func,
+  bgColor,
+  disabled,
+}) => {
   return (
     <TouchableOpacity
+      disabled={disabled}
       style={[
         styles.container,
         {width: width, backgroundColor: bgColor, height: height},
