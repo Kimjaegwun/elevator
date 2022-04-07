@@ -1,14 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Alert,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
 import Box from '../components/Box';
 import Button from '../components/Button';
+import ToastModal from '../components/Toast';
 import {EVType} from '../types';
 
 type Props = {
@@ -62,10 +56,16 @@ const Elevators: React.FC<Props> = ({route}) => {
 
     setEVModels(modelArr);
     setFloorModel(floorArr);
-  }, []);
+  }, [elevatorNum, floor]);
 
   // 클릭한 층수들 확인
   const [selectedFloor, setSelectedFloor] = useState<any>({});
+
+  // 가능한 E/V 없을시 toast 활성화
+  const [modal, setModal] = useState(false);
+  const handleModal = () => {
+    setModal(!modal);
+  };
 
   // 층수 클릭시 E/V 움직임 변경 함수
   const clickFloor = async (clicked: number) => {
@@ -79,9 +79,7 @@ const Elevators: React.FC<Props> = ({route}) => {
     const enableEV = copyEVModels.filter(item => item.status === 'waiting');
 
     if (enableEV.length === 0) {
-      Alert.alert(
-        '현재 운영 가능한 엘리베이터가 없습니다. 조금만 기달려주세요.',
-      );
+      handleModal();
     }
 
     if (checkEV === -1 && enableEV.length !== 0) {
@@ -170,93 +168,95 @@ const Elevators: React.FC<Props> = ({route}) => {
   };
 
   return (
-    <ScrollView style={{backgroundColor: '#ffffff'}}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.evContainer}>
-        <View>
-          {floorModel &&
-            floorModel.map(item => {
-              const findFloor = selectedFloor[item];
+    <React.Fragment>
+      <ScrollView style={styles.container}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.evContainer}>
+          <View>
+            {floorModel &&
+              floorModel.map(item => {
+                const findFloor = selectedFloor[item];
 
-              const color = findFloor !== undefined ? 'gray' : '#38ada9';
-
-              return (
-                <View key={item} style={styles.floorContainer}>
-                  <Button
-                    width={45}
-                    height={40}
-                    title={String(item) + '층'}
-                    func={() => clickFloor(item)}
-                    bgColor={color}
-                    disabled={findFloor !== undefined}
-                  />
-                </View>
-              );
-            })}
-        </View>
-
-        {evModels &&
-          evModels.map(model => (
-            <FlatList
-              key={model.id + ''}
-              data={model.floors}
-              renderItem={({_, index}) => {
-                // 층 누를시 선택된 E/V 색깔 변화
-                const color = () => {
-                  if (
-                    model.status === 'moving' &&
-                    model.current_floor === floor - index
-                  ) {
-                    return '#70a1ff';
-                  }
-
-                  if (
-                    model.status === 'opening' &&
-                    model.current_floor === floor - index
-                  ) {
-                    return '#7bed9f';
-                  }
-
-                  if (model.current_floor === floor - index) {
-                    return 'black';
-                  } else {
-                    return 'white';
-                  }
-                };
+                const color = findFloor !== undefined ? 'gray' : '#38ada9';
 
                 return (
-                  <Box
-                    width={100}
-                    height={100}
-                    color={color() || 'white'}
-                    text={floor - index + ''}
-                  />
+                  <View key={item} style={styles.floorContainer}>
+                    <Button
+                      width={45}
+                      height={40}
+                      title={String(item) + '층'}
+                      func={() => clickFloor(item)}
+                      bgColor={color}
+                      disabled={findFloor !== undefined}
+                    />
+                  </View>
                 );
-              }}
-              contentContainerStyle={{borderWidth: 1}}
-              ListFooterComponent={() => (
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                    marginVertical: 5,
-                  }}>
-                  E/V {model.id + 1}호기
-                </Text>
-              )}
-              style={{marginLeft: 10}}
-            />
-          ))}
+              })}
+          </View>
+
+          {evModels &&
+            evModels.map(model => (
+              <FlatList
+                key={model.id + ''}
+                data={model.floors}
+                renderItem={({index}) => {
+                  // 층 누를시 선택된 E/V 색깔 변화
+                  const color = () => {
+                    if (
+                      model.status === 'moving' &&
+                      model.current_floor === floor - index
+                    ) {
+                      return '#70a1ff';
+                    }
+
+                    if (
+                      model.status === 'opening' &&
+                      model.current_floor === floor - index
+                    ) {
+                      return '#7bed9f';
+                    }
+
+                    if (model.current_floor === floor - index) {
+                      return 'black';
+                    } else {
+                      return 'white';
+                    }
+                  };
+
+                  return (
+                    <Box
+                      width={100}
+                      height={100}
+                      color={color() || 'white'}
+                      text={floor - index + ''}
+                    />
+                  );
+                }}
+                contentContainerStyle={{borderWidth: 1}}
+                ListFooterComponent={() => (
+                  <Text style={styles.evTitle}>E/V {model.id + 1}호기</Text>
+                )}
+                ListFooterComponentStyle={{borderTopWidth: 1}}
+                style={{marginLeft: 10}}
+              />
+            ))}
+        </ScrollView>
       </ScrollView>
-    </ScrollView>
+
+      <ToastModal modal={modal} />
+    </React.Fragment>
   );
 };
 
 export default Elevators;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
   evContainer: {
     marginTop: 10,
     paddingHorizontal: 20,
@@ -264,5 +264,10 @@ const styles = StyleSheet.create({
   floorContainer: {
     paddingVertical: 30,
     marginRight: 20,
+  },
+  evTitle: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    marginVertical: 5,
   },
 });
