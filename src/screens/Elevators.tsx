@@ -1,10 +1,10 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {EVType} from '../types';
 import Box from '../components/Box';
 import Button from '../components/Button';
 import InputForm from '../components/InputForm';
 import ToastModal from '../components/Toast';
-import {EVType} from '../types';
 
 type Props = {
   route: {
@@ -22,10 +22,11 @@ const Elevators: React.FC<Props> = ({route}) => {
     elevatorNum: route.params.elevatorNum,
   });
 
+  // 현재 층 및 E/V 개수
   const [floor, setFloor] = useState(route.params.floor);
   const [elevatorNum, setElevatorNum] = useState(route.params.elevatorNum);
 
-  // 층수 및 엘레베이터 모델
+  // 층수 및 E/V 모델
   const [floorModel, setFloorModel] = useState<Array<number>>([]);
   const [evModels, setEVModels] = useState<Array<EVType>>([]);
 
@@ -170,7 +171,10 @@ const Elevators: React.FC<Props> = ({route}) => {
   };
 
   // 생성시 새로운 E/V 생성
-  const createNewModels = () => {};
+  const createNewModels = () => {
+    setFloor(origin.floor);
+    setElevatorNum(origin.elevatorNum);
+  };
 
   return (
     <Fragment>
