@@ -9,4 +9,5 @@ export type EVType = {
   target_floor: number;
   floors: number[];
   status: 'waiting' | 'moving' | 'opening';
+  animated: any;
 };

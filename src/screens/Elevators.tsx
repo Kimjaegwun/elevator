@@ -1,5 +1,12 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {
+  Animated,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {EVType} from '../types';
 import Box from '../components/Box';
 import Button from '../components/Button';
@@ -48,6 +55,7 @@ const Elevators: React.FC<Props> = ({route}) => {
         target_floor: 1,
         floors: arr,
         status: 'waiting',
+        animated: new Animated.ValueXY({x: 0, y: 0}),
       });
     }
 
@@ -125,10 +133,12 @@ const Elevators: React.FC<Props> = ({route}) => {
 
       for (let i = 0; i < Math.abs(selectEVDistance); i++) {
         if (selectEVDistance > 0) {
+          movingEV(getEV.id, getEV.current_floor);
           await wait(1000);
           getEV.current_floor += 1;
           setEVModels([...copyEVModels]);
         } else {
+          movingEV(getEV.id, getEV.current_floor - 2);
           await wait(1000);
           getEV.current_floor -= 1;
           setEVModels([...copyEVModels]);
@@ -174,6 +184,18 @@ const Elevators: React.FC<Props> = ({route}) => {
   const createNewModels = () => {
     setFloor(origin.floor);
     setElevatorNum(origin.elevatorNum);
+  };
+
+  // E/V 움직임 구현
+  const movingEV = (index: number, getFloor: number) => {
+    return Animated.timing(evModels[index].animated, {
+      toValue: {
+        x: 0,
+        y: -100 * getFloor,
+      },
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
   };
 
   return (
@@ -247,51 +269,50 @@ const Elevators: React.FC<Props> = ({route}) => {
 
           {/* E/V 모델 */}
           {evModels &&
-            evModels.map(model => (
-              <FlatList
-                key={model.id + ''}
-                data={model.floors}
-                renderItem={({index}) => {
-                  // 층 누를시 선택된 E/V 색깔 변화
-                  const color = () => {
-                    if (
-                      model.status === 'moving' &&
-                      model.current_floor === floor - index
-                    ) {
-                      return '#70a1ff';
-                    }
+            evModels.map((model, idx) => {
+              const color =
+                model.status === 'moving'
+                  ? '#70a1ff'
+                  : model.status === 'opening'
+                  ? '#7bed9f'
+                  : 'black';
 
-                    if (
-                      model.status === 'opening' &&
-                      model.current_floor === floor - index
-                    ) {
-                      return '#7bed9f';
-                    }
-
-                    if (model.current_floor === floor - index) {
-                      return 'black';
-                    } else {
-                      return 'white';
-                    }
-                  };
-
-                  return (
-                    <Box
-                      width={100}
-                      height={100}
-                      color={color() || 'white'}
-                      text={floor - index + ''}
-                    />
-                  );
-                }}
-                contentContainerStyle={{borderWidth: 1}}
-                ListFooterComponent={() => (
-                  <Text style={styles.evTitle}>E/V {model.id + 1}호기</Text>
-                )}
-                ListFooterComponentStyle={{borderTopWidth: 1}}
-                style={{marginLeft: 10}}
-              />
-            ))}
+              return (
+                <View key={model.id + ''}>
+                  <FlatList
+                    key={model.id + ''}
+                    data={model.floors}
+                    renderItem={({index}) => {
+                      return (
+                        <Box
+                          width={100}
+                          height={100}
+                          color={'white'}
+                          text={floor - index + ''}
+                        />
+                      );
+                    }}
+                    contentContainerStyle={{borderWidth: 1}}
+                    ListFooterComponent={() => (
+                      <Text style={styles.evTitle}>E/V {model.id + 1}호기</Text>
+                    )}
+                    ListFooterComponentStyle={{borderTopWidth: 1}}
+                    style={{marginLeft: 10}}
+                  />
+                  <Animated.View
+                    style={[
+                      styles.animatedBox,
+                      {
+                        backgroundColor: color,
+                        top: 100 * (floor - 1) + 1,
+                        transform: [{translateY: evModels[idx].animated.y}],
+                      },
+                    ]}>
+                    <Text style={{color: '#ffffff'}}>{model.status}</Text>
+                  </Animated.View>
+                </View>
+              );
+            })}
         </ScrollView>
       </ScrollView>
 
@@ -325,5 +346,12 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     marginBottom: 30,
     flexDirection: 'row',
+  },
+  animatedBox: {
+    width: 99,
+    height: 99,
+    position: 'absolute',
+    left: 11.5,
+    padding: 5,
   },
 });
