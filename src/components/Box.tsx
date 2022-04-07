@@ -1,23 +1,40 @@
 import React from 'react';
-import {View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 interface Props {
   width: number;
   height: number;
   color: string;
+  text?: string;
 }
 
-const Box: React.FC<Props> = ({width, height, color}) => {
+const Box: React.FC<Props> = ({width, height, color, text}) => {
   return (
     <View
-      style={{
-        width: width,
-        height: height,
-        borderWidth: 1,
-        backgroundColor: color,
-      }}
-    />
+      style={[
+        styles.wrapper,
+        {
+          width: width,
+          height: height,
+          backgroundColor: color,
+        },
+      ]}>
+      <Text style={styles.content}>{text}</Text>
+    </View>
   );
 };
 
 export default Box;
+
+const styles = StyleSheet.create({
+  wrapper: {
+    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});

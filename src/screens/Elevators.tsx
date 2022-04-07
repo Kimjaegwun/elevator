@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   FlatList,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import Box from '../components/Box';
@@ -22,7 +22,7 @@ type Props = {
 
 const Elevators: React.FC<Props> = ({route}) => {
   // 이전 생성 데이터 저장
-  const [origin, setOrigin] = useState({
+  const [_, setOrigin] = useState({
     floor: route.params.floor,
     elevatorNum: route.params.elevatorNum,
   });
@@ -76,7 +76,15 @@ const Elevators: React.FC<Props> = ({route}) => {
       item => item.status === 'waiting' && item.current_floor === clicked,
     );
 
-    if (checkEV === -1) {
+    const enableEV = copyEVModels.filter(item => item.status === 'waiting');
+
+    if (enableEV.length === 0) {
+      Alert.alert(
+        '현재 운영 가능한 엘리베이터가 없습니다. 조금만 기달려주세요.',
+      );
+    }
+
+    if (checkEV === -1 && enableEV.length !== 0) {
       let selectedEV = {ev: [] as number[], distance: 0};
 
       // E/V를 순회하면서 가까운 E/V를 찾는다
@@ -134,6 +142,7 @@ const Elevators: React.FC<Props> = ({route}) => {
     }
   };
 
+  // 층 버튼 클릭시 활성화/비활성화 구분
   useEffect(() => {
     setSelectedFloor(() => {
       const select = evModels.filter(item => item.status !== 'waiting');
@@ -161,7 +170,7 @@ const Elevators: React.FC<Props> = ({route}) => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: '#ffffff'}}>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -218,9 +227,25 @@ const Elevators: React.FC<Props> = ({route}) => {
                 };
 
                 return (
-                  <Box width={100} height={100} color={color() || 'white'} />
+                  <Box
+                    width={100}
+                    height={100}
+                    color={color() || 'white'}
+                    text={floor - index + ''}
+                  />
                 );
               }}
+              contentContainerStyle={{borderWidth: 1}}
+              ListFooterComponent={() => (
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    fontWeight: 'bold',
+                    marginVertical: 5,
+                  }}>
+                  E/V {model.id + 1}호기
+                </Text>
+              )}
               style={{marginLeft: 10}}
             />
           ))}
