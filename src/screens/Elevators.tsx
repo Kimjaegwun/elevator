@@ -69,7 +69,6 @@ const Elevators: React.FC<Props> = ({route}) => {
 
   // 층수 클릭시 E/V 움직임 변경 함수
   const clickFloor = async (clicked: number) => {
-    let copySelectedFloor = {...selectedFloor};
     let copyEVModels = evModels.slice();
 
     // E/V가 동일한 층에 있는지 확인
@@ -108,6 +107,8 @@ const Elevators: React.FC<Props> = ({route}) => {
       const selectEVDistance = clicked - getEV.current_floor;
 
       getEV.status = 'moving';
+      getEV.target_floor = clicked;
+      setEVModels([...copyEVModels]);
 
       // wait 함수를 사용하여 대기시간을 만들어준다
       const wait = (timeToDelay: number) =>
@@ -130,16 +131,20 @@ const Elevators: React.FC<Props> = ({route}) => {
       await wait(2000);
       getEV.status = 'waiting';
       setEVModels([...copyEVModels]);
-
-      setSelectedFloor((prev: any) => {
-        if (prev[clicked] === 0) {
-          delete prev[clicked];
-          return {...prev};
-        }
-        return {...prev, [clicked]: 0};
-      });
     }
   };
+
+  useEffect(() => {
+    setSelectedFloor(() => {
+      const select = evModels.filter(item => item.status !== 'waiting');
+      const obj = {} as any;
+
+      for (let i = 0; i < select.length; i++) {
+        obj[select[i].target_floor] = select[i].id;
+      }
+      return {...obj};
+    });
+  }, [evModels]);
 
   // 층수 값 변경
   const onChangeFloor = (text: string) => {
