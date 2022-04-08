@@ -18,7 +18,7 @@
   - navigation
     - root
   - screens
-    - screen compoㅇnents, ...
+    - screen components, ...
   - types
 
 * components - input이나 button 등을 컴포넌화를 시켜 분류
@@ -43,15 +43,12 @@
 
 ## `Tech Stack`
 
-### `typescript`
+- typescript
+  : type 작성을 통해 코드에 목적을 명시하고 타입의 변수나 함수들에서 타입 추론을 통해 에러를 최소화하였습니다.
+  컴파일 단계에서 오류를 예방할 수 있어 생산성을 향상하였습니다.
 
-type 작성을 통해 코드에 목적을 명시하고 타입의 변수나 함수들에서 타입 추론을 통해 에러를 최소화하였습니다.
-컴파일 단계에서 오류를 예방할 수 있어 생산성을 향상하였습니다.
+- react-hooks
+  :useState를 사용하여 component 상태관리 / useEffect를 활용하여 life cycle에 맞춰 렌더링 될 때마다 특정 작업을 수행할 수 있도록하였습니다. 그리고 memo를 활용하여 함수형 컴포넌트 내부에서 발생하는 연산을 최적화하기 위해 노력하였습니다.
 
-### `react-hooks`
-
-useState를 사용하여 component 상태관리 / useEffect를 활용하여 life cycle에 맞춰 렌더링 될 때마다 특정 작업을 수행할 수 있도록하였습니다. 그리고 memo를 활용하여 함수형 컴포넌트 내부에서 발생하는 연산을 최적화하기 위해 노력하였습니다.
-
-### `react-native-navigation`
-
-react-native navigation을 이용하며 화면 이동을 하며, stack 구조로 screen이 쌓이도록 구현하였습니다.
+- react-native-navigation
+  :react-native navigation을 이용하며 화면 이동을 하며, stack 구조로 screen이 쌓이도록 구현하였습니다.
