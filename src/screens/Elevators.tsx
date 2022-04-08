@@ -201,6 +201,7 @@ const Elevators: React.FC<Props> = ({route}) => {
   return (
     <Fragment>
       <ScrollView
+        bounces={false}
         style={styles.container}
         contentContainerStyle={{paddingBottom: 50}}>
         {/* 층 및 E/V 생성 컨테이너 */}
@@ -282,6 +283,7 @@ const Elevators: React.FC<Props> = ({route}) => {
               return (
                 <View key={model.id + ''}>
                   <FlatList
+                    scrollEnabled={false}
                     key={model.id + ''}
                     data={model.floors}
                     renderItem={({index}) => {
