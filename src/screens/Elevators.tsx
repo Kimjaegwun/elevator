@@ -200,10 +200,12 @@ const Elevators: React.FC<Props> = ({route}) => {
 
   return (
     <Fragment>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{paddingBottom: 50}}>
         {/* 층 및 E/V 생성 컨테이너 */}
         <View style={styles.inputContainer}>
-          <View style={{flex: 2}}>
+          <View style={{flex: 1}}>
             <InputForm
               title="층수"
               value={String(origin.floor)}
@@ -218,7 +220,7 @@ const Elevators: React.FC<Props> = ({route}) => {
               value={String(origin.elevatorNum)}
             />
           </View>
-          <View style={{flex: 3, marginLeft: 20}}>
+          <View style={{flex: 1, marginLeft: 20}}>
             <Button
               title="생성하기"
               width="50%"
@@ -353,5 +355,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 11.5,
     padding: 5,
+    borderWidth: 0.5,
   },
 });
