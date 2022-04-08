@@ -1,8 +1,14 @@
 ## `실행 방법`
 
-1. android studio 실행 > Device Manager에서 devie 실행
-2. android 폴더 > local.properties 에서 sdk 위치를 /Users/(username)/Library/Android/sdk 형식으로 변경
+- android
+
+1. npm install
+2. android studio 실행 > Device Manager에서 devie 실행
+3. android 폴더 > local.properties 에서 sdk 위치를 /Users/(username)/Library/Android/sdk 형식으로 변경
    > terminal에서 npx react-native run-android 입력
+
+- ios
+  : npm install > xcode 실행 > ios 폴더 > xcworksapce 선택 > ios device 실행
 
 ## `폴더 구조`
 
@@ -40,7 +46,7 @@
 ### `typescript`
 
 type 작성을 통해 코드에 목적을 명시하고 타입의 변수나 함수들에서 타입 추론을 통해 에러를 최소화하였습니다.
-컴파일 단계에서 버그를 예방할 수 있어 생산성을 향상하였습니다.
+컴파일 단계에서 오류를 예방할 수 있어 생산성을 향상하였습니다.
 
 ### `react-hooks`
 

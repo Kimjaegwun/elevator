@@ -12,6 +12,7 @@ import Box from '../components/Box';
 import Button from '../components/Button';
 import InputForm from '../components/InputForm';
 import ToastModal from '../components/Toast';
+import {StackActions, useNavigation} from '@react-navigation/native';
 
 type Props = {
   route: {
@@ -30,8 +31,8 @@ const Elevators: React.FC<Props> = ({route}) => {
   });
 
   // 현재 층 및 E/V 개수
-  const [floor, setFloor] = useState(route.params.floor);
-  const [elevatorNum, setElevatorNum] = useState(route.params.elevatorNum);
+  const [floor] = useState(route.params.floor);
+  const [elevatorNum] = useState(route.params.elevatorNum);
 
   // 층수 및 E/V 모델
   const [floorModel, setFloorModel] = useState<Array<number>>([]);
@@ -180,10 +181,15 @@ const Elevators: React.FC<Props> = ({route}) => {
     });
   };
 
+  const navigation = useNavigation();
   // 생성시 새로운 E/V 생성
   const createNewModels = () => {
-    setFloor(origin.floor);
-    setElevatorNum(origin.elevatorNum);
+    navigation.dispatch(
+      StackActions.replace('Elevators', {
+        floor: origin.floor,
+        elevatorNum: origin.elevatorNum,
+      }),
+    );
   };
 
   // E/V 움직임 구현
@@ -246,7 +252,8 @@ const Elevators: React.FC<Props> = ({route}) => {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.evContainer}>
+          contentContainerStyle={styles.evContainer}
+          bounces={false}>
           {/* 층수 모델 */}
           <View>
             {floorModel &&
