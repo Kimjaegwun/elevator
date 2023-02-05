@@ -1,3 +1,5 @@
+![Skill](./assets/elevator.gif)
+
 ## `실행 방법`
 
 - android
